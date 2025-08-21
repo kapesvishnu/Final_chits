@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kapesvishnu.github.io/Final_chits/sitemap.xml
+Sitemap: https://chitcalculator.vercel.app/sitemap.xml
