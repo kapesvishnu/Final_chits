@@ -399,6 +399,121 @@
     </div>
 
     <script>
+        // Language translations
+        const translations = {
+            en: {
+                title: "Chit Fund Calculator",
+                subtitle: "Advanced Chits Calculator - Free Online Chit Funds Tool",
+                description: "Calculate chit fund bidding rates, profits, dividends, monthly savings, auction amounts, commission, and installments. Advanced chits calculator with best month analysis, profit/loss tracking, and export to PDF/Excel. Complete chit funds management tool for chitty, kuri, committee, and rotating savings calculations.",
+                features: "Features: Bidding Rate Calculator | Dividend Calculator | Commission Calculator | Best Month Analysis | Profit/Loss Tracking | Export Tools | Ranking System",
+                calculator: "Calculator",
+                analysis_report: "Analysis Report",
+                best_month_analysis: "Best Month Analysis",
+                chit: "Chit",
+                chit_amount: "Chit Amount (₹):",
+                commission: "Commission (%):",
+                total_months: "Total Months:",
+                current_month: "Current Month:",
+                auction_amount: "Auction Amount (₹):",
+                auction: "Auction",
+                bid_amount: "Bid Amount",
+                bid_interest: "Bid Interest",
+                bidder: "Bidder",
+                bidding_rate: "Bidding Rate",
+                bidder_gets: "Bidder Gets:",
+                share_result: "📤 Share Result",
+                share_image: "🖼️ Share Image",
+                save: "💾 Save",
+                other_members: "Other Members",
+                original_installment: "Original Installment:",
+                dividend_per_person: "Dividend per Person:",
+                payable_installment: "Payable Installment:",
+                monthly_savings: "Monthly Savings:",
+                manager: "Manager",
+                chit_commission: "Chit Commission:"
+            },
+            te: {
+                title: "చిట్ ఫండ్ కాలిక్యులేటర్",
+                subtitle: "అధునాతన చిట్స్ కాలిక్యులేటర్ - ఉచిత ఆన్‌లైన్ చిట్ ఫండ్స్ టూల్",
+                description: "చిట్ ఫండ్ బిడ్డింగ్ రేట్లు, లాభాలు, డివిడెండ్లు, నెలవారీ పొదుపులు, వేలం మొత్తాలు, కమిషన్ మరియు వాయిదాలను లెక్కించండి. బెస్ట్ మంత్ అనాలిసిస్, లాభ/నష్ట ట్రాకింగ్ మరియు PDF/Excel కు ఎక్స్‌పోర్ట్‌తో అధునాతన చిట్స్ కాలిక్యులేటర్.",
+                features: "ఫీచర్లు: బిడ్డింగ్ రేట్ కాలిక్యులేటర్ | డివిడెండ్ కాలిక్యులేటర్ | కమిషన్ కాలిక్యులేటర్ | బెస్ట్ మంత్ అనాలిసిస్ | లాభ/నష్ట ట్రాకింగ్ | ఎక్స్‌పోర్ట్ టూల్స్ | ర్యాంకింగ్ సిస్టమ్",
+                calculator: "కాలిక్యులేటర్",
+                analysis_report: "విశ్లేషణ నివేదిక",
+                best_month_analysis: "ఉత్తమ నెల విశ్లేషణ",
+                chit: "చిట్",
+                chit_amount: "చిట్ మొత్తం (₹):",
+                commission: "కమిషన్ (%):",
+                total_months: "మొత్తం నెలలు:",
+                current_month: "ప్రస్తుత నెల:",
+                auction_amount: "వేలం మొత్తం (₹):",
+                auction: "వేలం",
+                bid_amount: "బిడ్ మొత్తం",
+                bid_interest: "బిడ్ వడ్డీ",
+                bidder: "బిడ్డర్",
+                bidding_rate: "బిడ్డింగ్ రేట్",
+                bidder_gets: "బిడ్డర్ పొందుతుంది:",
+                share_result: "📤 ఫలితం షేర్ చేయండి",
+                share_image: "🖼️ చిత్రం షేర్ చేయండి",
+                save: "💾 సేవ్ చేయండి",
+                other_members: "ఇతర సభ్యులు",
+                original_installment: "అసలు వాయిదా:",
+                dividend_per_person: "వ్యక్తికి డివిడెండ్:",
+                payable_installment: "చెల్లించవలసిన వాయిదా:",
+                monthly_savings: "నెలవారీ పొదుపులు:",
+                manager: "మేనేజర్",
+                chit_commission: "చిట్ కమిషన్:"
+            },
+            hi: {
+                title: "चिट फंड कैलकुलेटर",
+                subtitle: "एडवांस्ड चिट्स कैलकुलेटर - फ्री ऑनलाइन चिट फंड्स टूल",
+                description: "चिट फंड बिडिंग रेट्स, मुनाफा, डिविडेंड, मासिक बचत, नीलामी राशि, कमीशन और किस्तों की गणना करें। बेस्ट मंथ एनालिसिस, प्रॉफिट/लॉस ट्रैकिंग और PDF/Excel में एक्सपोर्ट के साथ एडवांस्ड चिट्स कैलकुलेटर।",
+                features: "फीचर्स: बिडिंग रेट कैलकुलेटर | डिविडेंड कैलकुलेटर | कमीशन कैलकुलेटर | बेस्ट मंथ एनालिसिस | प्रॉफिट/लॉस ट्रैकिंग | एक्सपोर्ट टूल्स | रैंकिंग सिस्टम",
+                calculator: "कैलकुलेटर",
+                analysis_report: "विश्लेषण रिपोर्ट",
+                best_month_analysis: "सर्वोत्तम महीना विश्लेषण",
+                chit: "चिट",
+                chit_amount: "चिट राशि (₹):",
+                commission: "कमीशन (%):",
+                total_months: "कुल महीने:",
+                current_month: "वर्तमान महीना:",
+                auction_amount: "नीलामी राशि (₹):",
+                auction: "नीलामी",
+                bid_amount: "बिड राशि",
+                bid_interest: "बिड ब्याज",
+                bidder: "बिडर",
+                bidding_rate: "बिडिंग रेट",
+                bidder_gets: "बिडर को मिलता है:",
+                share_result: "📤 परिणाम साझा करें",
+                share_image: "🖼️ छवि साझा करें",
+                save: "💾 सेव करें",
+                other_members: "अन्य सदस्य",
+                original_installment: "मूल किस्त:",
+                dividend_per_person: "प्रति व्यक्ति डिविडेंड:",
+                payable_installment: "देय किस्त:",
+                monthly_savings: "मासिक बचत:",
+                manager: "प्रबंधक",
+                chit_commission: "चिट कमीशन:"
+            }
+        };
+        
+        let currentLanguage = 'en';
+        
+        function changeLanguage() {
+            const selector = document.getElementById('languageSelector');
+            currentLanguage = selector.value;
+            updateTexts();
+        }
+        
+        function updateTexts() {
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+        }
+        
         function calculate() {
             const chitAmount = parseFloat(document.getElementById('chitAmount').value.replace(/,/g, '')) || 0;
             const commissionPercent = parseFloat(document.getElementById('commission').value.replace(/,/g, '')) || 0;
@@ -1319,6 +1434,7 @@ Manager Chit Commission: ${document.getElementById('chitCommission').textContent
         calculate();
         loadSampleData();
         loadProfitAnalysis();
+        updateTexts();
         
         // Add print styles
         const printStyles = `
