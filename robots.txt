@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chitcalculator.vercel.app/sitemap.xml

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chit Fund Calculator</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; display: flex; gap: 25px; }
+        .input-section { background: linear-gradient(145deg, #ffffff, #f0f0f0); padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); flex: 2; border: 1px solid #e0e0e0; }
+        .output-section { background: linear-gradient(145deg, #1a1a2e, #16213e); color: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); flex: 1; }
+        h1 { text-align: center; color: white; margin-bottom: 30px; font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        h2 { color: #4a5568; font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+        .output-section h2 { color: #ffd700; border-bottom: 2px solid #ffd700; }
+        .input-line { display: flex; justify-content: space-between; align-items: center; margin: 18px 0; }
+        label { width: 150px; font-size: 15px; color: #2d3748; font-weight: 500; }
+        input[type="number"], input[type="text"] { width: 140px; height: 35px; background: linear-gradient(145deg, #e6fffa, #b2f5ea); border: 2px solid #38b2ac; color: #234e52; font-weight: bold; padding: 8px; border-radius: 8px; font-size: 14px; }
+        input[type="range"] { width: 100%; height: 6px; background: linear-gradient(90deg, #667eea, #764ba2); outline: none; margin: 15px 0; border-radius: 3px; }
+        .radio-group { display: flex; justify-content: space-around; margin: 20px 0; background: #f7fafc; padding: 15px; border-radius: 10px; }
+        .radio-group input[type="radio"] { appearance: none; width: 18px; height: 18px; border: 3px solid #667eea; border-radius: 50%; margin-right: 8px; }
+        .radio-group input[type="radio"]:checked { background: #667eea; box-shadow: 0 0 10px rgba(102, 126, 234, 0.5); }
+        .radio-group label { color: #4a5568; font-weight: 600; }
+        .output-group { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; }
+        .output-text { font-weight: bold; color: #e2e8f0; }
+        .highlight { font-size: 40px; color: #ffd700; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin: 20px 0; }
+        .blue-text { color: #63b3ed; font-weight: bold; font-size: 16px; }
+        button { background: linear-gradient(145deg, #667eea, #764ba2); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%; margin: 8px 0; font-weight: 600; transition: all 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .tabs { text-align: center; margin-bottom: 20px; }
+        .tab-btn { background: rgba(255,255,255,0.2); color: white; padding: 8px 15px; border: none; border-radius: 15px; margin: 0 5px; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; }
+        .tab-btn.calculator { background: #4CAF50; }
+        .tab-btn.analysis { background: #2196F3; }
+        .tab-btn.bestmonth { background: #FF9800; }
+        .tab-btn.active, .tab-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .sample-container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); margin: 0 auto; max-width: 1400px; overflow-x: auto; }
+        .sample-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .sample-table th { background: linear-gradient(145deg, #667eea, #764ba2); color: white; padding: 12px 8px; text-align: center; font-weight: 600; }
+        .sample-table td { padding: 10px 8px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .sample-table tr:nth-child(even) { background: #f8f9fa; }
+        .sample-table tr:hover { background: #e6fffa; }
+        .profit { color: #38a169; font-weight: bold; }
+        .loss { color: #e53e3e; font-weight: bold; }
+        .editable { background: #fff3cd !important; border: 1px solid #ffc107; }
+        .edit-input { width: 80px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        @media (max-width: 768px) { .container { flex-direction: column; } .sample-table { font-size: 10px; } .sample-table th, .sample-table td { padding: 6px 4px; } }
+    </style>
+</head>
+<body>
+    <h1>Chit Fund Calculator</h1>
+    
+    <div class="tabs">
+        <button class="tab-btn calculator active" onclick="showTab('calculator')">🧮 Calculator</button>
+        <button class="tab-btn analysis" onclick="showTab('sample')">📊 Analysis</button>
+        <button class="tab-btn bestmonth" onclick="showTab('profit')">🏆 Best Month</button>
+    </div>
+    
+    <div id="calculator" class="tab-content active">
+    <div class="container">
+        <div class="input-section">
+            <h2>Chit</h2>
+            <div class="input-line">
+                <label>Chit Amount (₹):</label>
+                <input type="text" id="chitAmount" value="40,00,000" onblur="formatInput(this)" onfocus="removeCommas(this)">
+            </div>
+            <div class="input-line">
+                <label>Commission (%):</label>
+                <input type="number" id="commission" value="4" step="0.1">
+            </div>
+            <div class="input-line">
+                <label>Total Months:</label>
+                <input type="number" id="totalMonths" value="20" min="1">
+            </div>
+            <div class="input-line">
+                <label>Current Month:</label>
+                <input type="number" id="currentMonth" value="1" min="1">
+            </div>
+            <div class="input-line">
+                <label>Auction Amount (₹):</label>
+                <input type="text" id="auctionAmount" value="2,00,000" onblur="formatInput(this)" onfocus="removeCommas(this)">
+            </div>
+            
+            <h2 style="margin-top: 40px;">Auction</h2>
+            <div class="radio-group">
+                <span><input type="radio" id="bidRadio" name="auctionType" value="bid" checked><label for="bidRadio">Bid Amount</label></span>
+                <span><input type="radio" id="interestRadio" name="auctionType" value="interest"><label for="interestRadio">Bid Interest</label></span>
+            </div>
+            
+            <div id="bidAmountGroup">
+                <div class="input-line">
+                    <label>Bid Amount (₹):</label>
+                    <input type="text" id="bidAmount" value="12,70,000" onblur="formatInput(this)" onfocus="removeCommas(this)">
+                </div>
+                <input type="range" id="bidAmountSlider" min="0" max="2000000" value="1270000">
+            </div>
+            
+            <div id="bidInterestGroup" style="display: none;">
+                <div class="input-line">
+                    <label>Bid Interest (%):</label>
+                    <input type="number" id="bidInterest" value="10" step="0.01">
+                </div>
+                <input type="range" id="bidInterestSlider" min="0" max="100" value="10" step="0.01">
+            </div>
+        </div>
+        
+        <div class="output-section">
+            <h2>Bidder</h2>
+            <div style="text-align: center; margin: 20px 0;">
+                <div>Bidding Rate</div>
+                <div id="biddingRate" class="highlight">0.00%</div>
+            </div>
+            <div class="output-group">
+                <span>Bidder Gets:</span>
+                <span id="bidderGet" class="blue-text">₹0</span>
+            </div>
+            
+            <button onclick="shareResult()">📤 Share Result</button>
+            <button onclick="shareAsImage()">🖼️ Share Image</button>
+            <button onclick="saveResult()">💾 Save</button>
+            
+            <h2 style="margin-top: 30px;">Other Members</h2>
+            <div class="output-group">
+                <span>Original Installment:</span>
+                <span id="originalInstallment">₹0</span>
+            </div>
+            <div class="output-group">
+                <span>Dividend per Person:</span>
+                <span id="dividendPerPerson">₹0</span>
+            </div>
+            <div class="output-group">
+                <span>Payable Installment:</span>
+                <span id="payableInstallment" class="blue-text">₹0</span>
+            </div>
+            <div class="output-group">
+                <span>Monthly Savings:</span>
+                <span id="monthlySavings">0%</span>
+            </div>
+            
+            <h2 style="margin-top: 30px;">Manager</h2>
+            <div class="output-group">
+                <span>Chit Commission:</span>
+                <span id="chitCommission">₹0</span>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <div id="sample" class="tab-content">
+        <div class="sample-container">
+            <h2 style="text-align: center; color: #4a5568; margin-bottom: 25px;">Chit Fund Analysis Report (Monthly)</h2>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #4a5568;">Chit Amount (₹):</label>
+                        <input type="text" id="analysisChitAmount" value="40,00,000" style="width: 100%; padding: 4px; border: 1px solid #667eea; border-radius: 3px; font-size: 12px;" onblur="formatInput(this)" onfocus="removeCommas(this)">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #4a5568;">Commission (%):</label>
+                        <input type="number" id="analysisCommission" value="4.00" step="0.01" style="width: 100%; padding: 4px; border: 1px solid #667eea; border-radius: 3px; font-size: 12px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #4a5568;">Total Months:</label>
+                        <input type="number" id="analysisTotalMonths" value="20" min="1" style="width: 100%; padding: 4px; border: 1px solid #667eea; border-radius: 3px; font-size: 12px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #4a5568;">Current Month:</label>
+                        <input type="number" id="analysisCurrentMonth" value="1" min="1" style="width: 100%; padding: 4px; border: 1px solid #667eea; border-radius: 3px; font-size: 12px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #4a5568;">Auction Amount (₹):</label>
+                        <input type="text" id="analysisAuctionAmount" value="2,00,000" style="width: 100%; padding: 4px; border: 1px solid #667eea; border-radius: 3px; font-size: 12px;" onblur="formatInput(this)" onfocus="removeCommas(this)">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #4a5568;">Bid Amount (₹):</label>
+                        <input type="text" id="analysisBidAmount" value="12,70,000" style="width: 100%; padding: 4px; border: 1px solid #667eea; border-radius: 3px; font-size: 12px;" onblur="formatInput(this)" onfocus="removeCommas(this)">
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <label style="margin-right: 10px; font-weight: bold; font-size: 12px;">EMI Monthly Paid (₹):</label>
+                    <span id="emiMonthlyPaid" style="background: #f8f9fa; padding: 4px 8px; border: 1px solid #dee2e6; border-radius: 3px; font-size: 12px; margin-right: 15px; color: #495057;">₹0</span>
+                    <button onclick="submitValues()" style="background: #28a745; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto; margin-right: 10px;">✓ Submit</button>
+                    <button onclick="fetchToBestMonth()" style="background: #17a2b8; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto; margin-right: 10px;">📊 Fetch to Best Month</button>
+                    <button onclick="toggleEdit()" id="editBtn" style="background: #667eea; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto; margin-right: 10px;">✏️ Edit</button>
+                    <button onclick="loadSampleData()" style="background: #38a169; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto; margin-right: 10px;">📄 Sample Data</button>
+                    <button onclick="clearData()" style="background: #e53e3e; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto; margin-right: 10px;">🗑️ Clear</button>
+                    <button onclick="exportToPDF()" style="background: #dc3545; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto; margin-right: 10px;">📄 Export PDF</button>
+                    <button onclick="downloadCSV()" style="background: #28a745; color: white; padding: 2px 6px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; width: auto;">⬇️ Download CSV</button>
+                </div>
+            </div>
+            <table class="sample-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>BID Amount</th>
+                        <th>Dealer Commission</th>
+                        <th>Payable Installment</th>
+                        <th>Bidder Gets</th>
+                        <th>Profit/Loss</th>
+                        <th>Monthly %</th>
+                        <th>Total Percentage Profit/Loss (<span id="totalMonthsHeader">20</span> Months)</th>
+                        <th>Annual Simple Interest Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="sampleData">
+                    <tr><td colspan="9" style="text-align: center; padding: 40px;">Enter values and click Submit to generate analysis</td></tr>
+                </tbody>
+                <tfoot>
+                    <tr style="background: #f1f5f9; font-weight: bold;">
+                        <td>Total</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td id="totalPayable">₹0</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    
+    <div id="profit" class="tab-content">
+        <div class="sample-container">
+            <h2 style="text-align: center; color: #4a5568; margin-bottom: 25px;">Best Month Analysis</h2>
+            
+            <div style="background: #e6fffa; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                <h3 style="color: #38a169; margin: 0;">🏆 Recommended Month: <span id="bestMonth">-</span></h3>
+                <p style="margin: 5px 0; color: #2d3748;" id="bestMonthProfit">Maximum Benefit: ₹0</p>
+            </div>
+            
+            <div style="margin: 15px 0; text-align: center;">
+                <label style="margin-right: 10px; font-weight: bold;">External Interest Rate:</label>
+                <input type="number" id="externalRate" value="12" step="0.1" min="0" max="50" onchange="generateComparison()" style="padding: 4px 8px; border: 1px solid #667eea; border-radius: 4px; width: 80px;">%
+                <button onclick="downloadBestMonthCSV()" style="background: #28a745; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; font-size: 11px;">⬇️ CSV</button>
+                <button onclick="downloadBestMonthPDF()" style="background: #dc3545; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; font-size: 11px;">📄 PDF</button>
+                <button onclick="downloadBestMonthExcel()" style="background: #17a2b8; color: white; padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px; font-size: 11px;">📈 Excel</button>
+            </div>
+            
+            <table class="sample-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Bid Amount</th>
+                        <th>Amount Received</th>
+                        <th>Chit Benefit</th>
+                        <th>External Benefit</th>
+                        <th>Total Benefit</th>
+                        <th>Rank</th>
+                    </tr>
+                </thead>
+                <tbody id="profitData">
+                    <tr><td colspan="7" style="text-align: center; padding: 40px;">Please generate analysis data first from the Analysis tab</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let editMode = false;
+        let detailedAnalysisData = [];
+
+        function formatInput(input) {
+            const value = parseFloat(input.value.replace(/,/g, '')) || 0;
+            input.value = new Intl.NumberFormat('en-IN').format(value);
+        }
+
+        function removeCommas(input) {
+            input.value = input.value.replace(/,/g, '');
+        }
+
+        function calculate() {
+            const chitAmount = parseFloat(document.getElementById('chitAmount').value.replace(/,/g, '')) || 0;
+            const totalMonths = parseInt(document.getElementById('totalMonths').value) || 20;
+            const commission = parseFloat(document.getElementById('commission').value) || 4;
+            const auctionAmount = parseFloat(document.getElementById('auctionAmount').value.replace(/,/g, '')) || 0;
+            const currentMonth = parseInt(document.getElementById('currentMonth').value) || 1;
+            const bidType = document.querySelector('input[name="auctionType"]:checked').value;
+
+            let bidAmount, bidRate;
+
+            if (bidType === 'bid') {
+                bidAmount = parseFloat(document.getElementById('bidAmount').value.replace(/,/g, '')) || 0;
+                const remainingMonths = totalMonths - currentMonth + 1;
+                bidRate = (bidAmount * 12 * 100) / ((chitAmount - bidAmount) * remainingMonths);
+            } else {
+                bidRate = parseFloat(document.getElementById('bidInterest').value) || 0;
+                bidAmount = (bidRate * chitAmount * (totalMonths - currentMonth + 1)) / 
+                           (12 * 100 + bidRate * (totalMonths - currentMonth + 1));
+            }
+
+            const organizerCommission = (commission * chitAmount) / 100;
+            const bidderGets = chitAmount - bidAmount;
+            const totalDividend = bidAmount - organizerCommission;
+            const dividendPerPerson = totalDividend / totalMonths;
+            const payableInstallment = auctionAmount - dividendPerPerson;
+            const monthlySavings = (dividendPerPerson / auctionAmount) * 100;
+
+            // Update display
+            document.getElementById('biddingRate').textContent = bidRate.toFixed(2) + '%';
+            document.getElementById('bidderGet').textContent = '₹' + new Intl.NumberFormat('en-IN').format(bidderGets);
+            document.getElementById('originalInstallment').textContent = '₹' + new Intl.NumberFormat('en-IN').format(auctionAmount);
+            document.getElementById('dividendPerPerson').textContent = '₹' + new Intl.NumberFormat('en-IN').format(dividendPerPerson);
+            document.getElementById('payableInstallment').textContent = '₹' + new Intl.NumberFormat('en-IN').format(payableInstallment);
+            document.getElementById('monthlySavings').textContent = monthlySavings.toFixed(2) + '%';
+            document.getElementById('chitCommission').textContent = '₹' + new Intl.NumberFormat('en-IN').format(organizerCommission);
+
+            // Update sliders
+            document.getElementById('bidAmountSlider').value = bidAmount;
+            document.getElementById('bidInterestSlider').value = bidRate;
+        }
+
+        function toggleAuctionType() {
+            const auctionType = document.querySelector('input[name="auctionType"]:checked').value;
+            const bidAmountGroup = document.getElementById('bidAmountGroup');
+            const bidInterestGroup = document.getElementById('bidInterestGroup');
+            
+            if (auctionType === 'bid') {
+                bidAmountGroup.style.display = 'block';
+                bidInterestGroup.style.display = 'none';
+            } else {
+                bidAmountGroup.style.display = 'none';
+                bidInterestGroup.style.display = 'block';
+            }
+            calculate();
+        }
+
+        function submitValues() {
+            const chitAmount = parseFloat(document.getElementById('analysisChitAmount').value.replace(/,/g, '')) || 4000000;
+            const commission = parseFloat(document.getElementById('analysisCommission').value) || 4;
+            const auctionAmount = parseFloat(document.getElementById('analysisAuctionAmount').value.replace(/,/g, '')) || 200000;
+            const bidAmount = parseFloat(document.getElementById('analysisBidAmount').value.replace(/,/g, '')) || 1270000;
+            const totalMonths = parseInt(document.getElementById('analysisTotalMonths').value) || 20;
+            
+            document.getElementById('totalMonthsHeader').textContent = totalMonths;
+            
+            const dealerCommission = (commission * chitAmount) / 100;
+            
+            detailedAnalysisData = [];
+            for (let month = 1; month <= totalMonths; month++) {
+                const monthBidAmount = bidAmount;
+                const bidderGets = chitAmount - monthBidAmount;
+                const totalDividend = monthBidAmount - dealerCommission;
+                const dividendPerPerson = totalDividend / totalMonths;
+                const payableInstallment = Math.max(0, bidderGets - dividendPerPerson);
+                detailedAnalysisData.push([month, monthBidAmount, dealerCommission, payableInstallment, bidderGets, 0, 0, 0, 0]);
+            }
+            
+            // Calculate profit/loss for each month
+            const totalPayableSum = detailedAnalysisData.reduce((sum, row) => sum + row[3], 0);
+            for (let i = 0; i < detailedAnalysisData.length; i++) {
+                const profitLoss = detailedAnalysisData[i][4] - totalPayableSum;
+                const totalPercentage = detailedAnalysisData[i][4] > 0 ? (profitLoss / detailedAnalysisData[i][4]) * 100 : 0;
+                const monthlyRate = totalPercentage / totalMonths;
+                const annualRate = monthlyRate * 12;
+                
+                detailedAnalysisData[i][5] = profitLoss;
+                detailedAnalysisData[i][6] = monthlyRate;
+                detailedAnalysisData[i][7] = totalPercentage;
+                detailedAnalysisData[i][8] = annualRate;
+            }
+            
+            const totalDividend = bidAmount - dealerCommission;
+            const dividendPerPerson = totalDividend / totalMonths;
+            const emiMonthlyPaid = Math.max(0, (chitAmount - bidAmount) - dividendPerPerson);
+            
+            document.getElementById('emiMonthlyPaid').textContent = '₹' + new Intl.NumberFormat('en-IN').format(emiMonthlyPaid);
+            
+            generateDetailedAnalysis();
+        }
+
+        function generateDetailedAnalysis() {
+            const tbody = document.getElementById('sampleData');
+            
+            tbody.innerHTML = detailedAnalysisData.map((row, index) => `
+                <tr>
+                    <td>${row[0]}</td>
+                    <td class="${editMode ? 'editable' : ''}">
+                        ${editMode ? `<input class="edit-input" value="${row[1]}" onchange="updateData(${index}, 1, this.value)">` : '₹' + new Intl.NumberFormat('en-IN').format(row[1])}
+                    </td>
+                    <td class="${editMode ? 'editable' : ''}">
+                        ${editMode ? `<input class="edit-input" value="${row[2]}" onchange="updateData(${index}, 2, this.value)">` : '₹' + new Intl.NumberFormat('en-IN').format(row[2])}
+                    </td>
+                    <td>₹${new Intl.NumberFormat('en-IN').format(row[3])}</td>
+                    <td>₹${new Intl.NumberFormat('en-IN').format(row[4])}</td>
+                    <td class="${row[5] >= 0 ? 'profit' : 'loss'}">${row[5] >= 0 ? '+' : ''}₹${new Intl.NumberFormat('en-IN').format(row[5])}</td>
+                    <td class="${row[6] >= 0 ? 'profit' : 'loss'}">${row[6] >= 0 ? '+' : ''}${row[6].toFixed(2)}%</td>
+                    <td class="${row[7] >= 0 ? 'profit' : 'loss'}">${row[7] >= 0 ? '+' : ''}${row[7].toFixed(2)}%</td>
+                    <td class="${row[8] >= 0 ? 'profit' : 'loss'}">${row[8] >= 0 ? '+' : ''}${row[8].toFixed(2)}%</td>
+                </tr>
+            `).join('');
+            
+            const totalPayable = detailedAnalysisData.reduce((sum, row) => sum + row[3], 0);
+            document.getElementById('totalPayable').textContent = '₹' + new Intl.NumberFormat('en-IN').format(totalPayable);
+        }
+
+        function loadSampleData() {
+            document.getElementById('analysisChitAmount').value = '40,00,000';
+            document.getElementById('analysisCommission').value = '4.00';
+            document.getElementById('analysisTotalMonths').value = '20';
+            document.getElementById('analysisCurrentMonth').value = '1';
+            document.getElementById('analysisAuctionAmount').value = '2,00,000';
+            document.getElementById('analysisBidAmount').value = '12,70,000';
+            
+            detailedAnalysisData = [
+                [1, 1270000, 160000, 144500, 2730000, -665000, -1.22, -24.36, -14.62],
+                [2, 1320000, 160000, 142000, 2680000, -715000, -1.33, -26.68, -16.01],
+                [3, 1295000, 160000, 143250, 2705000, -690000, -1.28, -25.51, -15.30],
+                [4, 1290000, 160000, 143500, 2710000, -685000, -1.26, -25.28, -15.17],
+                [5, 1220000, 160000, 147000, 2780000, -615000, -1.11, -22.12, -13.27],
+                [6, 1150000, 160000, 150500, 2850000, -545000, -0.96, -19.12, -11.47],
+                [7, 1020000, 160000, 157000, 2980000, -415000, -0.70, -13.93, -8.36],
+                [8, 910000, 160000, 162500, 3090000, -305000, -0.49, -9.87, -5.92],
+                [9, 800000, 160000, 168000, 3200000, -195000, -0.30, -6.09, -3.66],
+                [10, 755000, 160000, 170250, 3245000, -150000, -0.23, -4.62, -2.77],
+                [11, 730000, 160000, 171500, 3270000, -125000, -0.19, -3.82, -2.29],
+                [12, 685000, 160000, 173750, 3315000, -80000, -0.12, -2.41, -1.45],
+                [13, 585000, 160000, 178750, 3415000, 20000, 0.03, 0.59, 0.35],
+                [14, 505000, 160000, 182750, 3495000, 100000, 0.14, 2.86, 1.72],
+                [15, 445000, 160000, 185750, 3555000, 160000, 0.23, 4.50, 2.70],
+                [16, 380000, 160000, 189000, 3620000, 225000, 0.31, 6.22, 3.73],
+                [17, 320000, 160000, 192000, 3680000, 285000, 0.39, 7.74, 4.65],
+                [18, 260000, 160000, 195000, 3740000, 345000, 0.46, 9.22, 5.53],
+                [19, 200000, 160000, 198000, 3800000, 405000, 0.53, 10.66, 6.39],
+                [20, 0, 160000, 200000, 3840000, 445000, 0.58, 11.59, 6.95]
+            ];
+            
+            document.getElementById('emiMonthlyPaid').textContent = '₹1,44,500';
+            generateDetailedAnalysis();
+        }
+
+        function toggleEdit() {
+            editMode = !editMode;
+            const btn = document.getElementById('editBtn');
+            btn.textContent = editMode ? '💾 Save' : '✏️ Edit';
+            btn.style.background = editMode ? '#38a169' : '#667eea';
+            generateDetailedAnalysis();
+        }
+
+        function updateData(rowIndex, colIndex, value) {
+            detailedAnalysisData[rowIndex][colIndex] = parseFloat(value) || 0;
+            const totalMonths = parseInt(document.getElementById('analysisTotalMonths').value) || 20;
+            const row = detailedAnalysisData[rowIndex];
+            const chitAmount = parseFloat(document.getElementById('analysisChitAmount').value.replace(/,/g, '')) || 4000000;
+            
+            const chitAmount = parseFloat(document.getElementById('analysisChitAmount').value.replace(/,/g, '')) || 4000000;
+            const commission = parseFloat(document.getElementById('analysisCommission').value) || 4;
+            row[2] = (commission * chitAmount) / 100; // Update dealer commission
+            const totalDividend = row[1] - row[2];
+            const dividendPerPerson = totalDividend / totalMonths;
+            row[3] = Math.max(0, row[4] - dividendPerPerson);
+            row[4] = chitAmount - row[1];
+            
+            const totalPayableSum = detailedAnalysisData.reduce((sum, r) => sum + r[3], 0);
+            row[5] = row[4] - totalPayableSum;
+            
+            if (row[4] > 0) {
+                row[7] = (row[5] / row[4]) * 100;
+                row[6] = row[7] / totalMonths;
+                row[8] = row[6] * 12;
+            } else {
+                row[6] = row[7] = row[8] = 0;
+            }
+            
+            generateDetailedAnalysis();
+        }
+
+        function clearData() {
+            if (confirm('Clear all analysis data?')) {
+                document.getElementById('sampleData').innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px;">Data cleared. Enter values and click Submit.</td></tr>';
+                document.getElementById('totalPayable').textContent = '₹0';
+                document.getElementById('emiMonthlyPaid').textContent = '₹0';
+                detailedAnalysisData = [];
+            }
+        }
+
+        function fetchToBestMonth() {
+            if (detailedAnalysisData.length === 0) {
+                alert('Please generate analysis data first!');
+                return;
+            }
+            
+            showTab('profit');
+            generateComparison();
+        }
+
+        function generateComparison() {
+            if (detailedAnalysisData.length === 0) {
+                document.getElementById('profitData').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">Please generate analysis data first from the Analysis tab</td></tr>';
+                return;
+            }
+            
+            const externalRate = parseFloat(document.getElementById('externalRate').value) || 12;
+            const tbody = document.getElementById('profitData');
+            
+            const comparisonData = detailedAnalysisData.map(row => {
+                const month = row[0];
+                const bidAmount = row[1];
+                const amountReceived = row[4];
+                const chitBenefit = row[5];
+                const remainingMonths = Math.max(0, 20 - month);
+                const externalBenefit = remainingMonths > 0 ? amountReceived * (externalRate / 100) * (remainingMonths / 12) : 0;
+                const totalBenefit = chitBenefit + externalBenefit;
+                return { month, bidAmount, amountReceived, chitBenefit, externalBenefit, totalBenefit };
+            });
+
+            comparisonData.sort((a, b) => b.totalBenefit - a.totalBenefit);
+            
+            const bestMonth = comparisonData[0];
+            document.getElementById('bestMonth').textContent = bestMonth.month;
+            document.getElementById('bestMonthProfit').textContent = 'Maximum Benefit: ₹' + new Intl.NumberFormat('en-IN').format(Math.round(bestMonth.totalBenefit));
+
+            tbody.innerHTML = comparisonData.map((row, index) => {
+                let rankIcon = '🏆';
+                if (index >= 5 && index < 10) rankIcon = '🥈';
+                else if (index >= 10 && index < 15) rankIcon = '🥉';
+                else if (index >= 15 && index < 18) rankIcon = '🟠';
+                else if (index >= 18) rankIcon = '❌';
+                
+                return `
+                    <tr class="${index === 0 ? 'highlight' : ''}">
+                        <td>${row.month}</td>
+                        <td>₹${new Intl.NumberFormat('en-IN').format(row.bidAmount)}</td>
+                        <td>₹${new Intl.NumberFormat('en-IN').format(row.amountReceived)}</td>
+                        <td class="${row.chitBenefit >= 0 ? 'profit' : 'loss'}">₹${new Intl.NumberFormat('en-IN').format(row.chitBenefit)}</td>
+                        <td class="profit">₹${new Intl.NumberFormat('en-IN').format(Math.round(row.externalBenefit))}</td>
+                        <td class="${row.totalBenefit >= 0 ? 'profit' : 'loss'}">₹${new Intl.NumberFormat('en-IN').format(Math.round(row.totalBenefit))}</td>
+                        <td>${rankIcon} Rank ${index + 1}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'profit') {
+                generateComparison();
+            }
+        }
+
+        function shareResult() {
+            const result = `Chit Fund Calculation:
+Bidding Rate: ${document.getElementById('biddingRate').textContent}
+Bidder Gets: ${document.getElementById('bidderGet').textContent}
+Payable Installment: ${document.getElementById('payableInstallment').textContent}
+Monthly Savings: ${document.getElementById('monthlySavings').textContent}`;
+            
+            if (navigator.share) {
+                navigator.share({ title: 'Chit Fund Calculator', text: result });
+            } else {
+                navigator.clipboard.writeText(result);
+                alert('Result copied to clipboard!');
+            }
+        }
+
+        function shareAsImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 500;
+            
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Chit Fund Calculator', canvas.width/2, 40);
+            
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            const results = [
+                `Bidding Rate: ${document.getElementById('biddingRate').textContent}`,
+                `Bidder Gets: ${document.getElementById('bidderGet').textContent}`,
+                `Payable Installment: ${document.getElementById('payableInstallment').textContent}`,
+                `Monthly Savings: ${document.getElementById('monthlySavings').textContent}`
+            ];
+            
+            results.forEach((text, index) => {
+                ctx.fillText(text, 20, 100 + (index * 30));
+            });
+            
+            canvas.toBlob(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'chit-calculation.png';
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function saveResult() {
+            localStorage.setItem('chitResult_' + Date.now(), JSON.stringify({
+                biddingRate: document.getElementById('biddingRate').textContent,
+                bidderGet: document.getElementById('bidderGet').textContent,
+                payableInstallment: document.getElementById('payableInstallment').textContent
+            }));
+            alert('Result saved!');
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function downloadCSV() {
+            if (detailedAnalysisData.length === 0) {
+                alert('Please generate analysis first!');
+                return;
+            }
+            
+            let csv = 'Month,BID Amount,Dealer Commission,Payable Installment,Bidder Gets,Profit/Loss,Monthly %,Total Percentage,Annual Rate\n';
+            detailedAnalysisData.forEach(row => {
+                csv += `${row[0]},${row[1]},${row[2]},${row[3]},${row[4]},${row[5]},${row[6].toFixed(2)}%,${row[7].toFixed(2)}%,${row[8].toFixed(2)}%\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chit_analysis.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadBestMonthCSV() {
+            if (detailedAnalysisData.length === 0) {
+                alert('Please generate analysis data first!');
+                return;
+            }
+            
+            const externalRate = parseFloat(document.getElementById('externalRate').value) || 12;
+            let csv = 'Month,Bid Amount,Received Amount,Chit Profit/Loss,External Interest,Total Benefit,Rank\n';
+            
+            const comparisonData = detailedAnalysisData.map(row => {
+                const month = row[0];
+                const bidAmount = row[1];
+                const amountReceived = row[4];
+                const chitBenefit = row[5];
+                const remainingMonths = 20 - month;
+                const externalBenefit = amountReceived * (externalRate / 100) * (remainingMonths / 12);
+                const totalBenefit = chitBenefit + externalBenefit;
+                return { month, bidAmount, amountReceived, chitBenefit, externalBenefit, totalBenefit };
+            });
+
+            comparisonData.sort((a, b) => b.totalBenefit - a.totalBenefit);
+            
+            comparisonData.forEach((row, index) => {
+                csv += `${row.month},${row.bidAmount},${row.amountReceived},${row.chitBenefit},${row.externalBenefit.toFixed(0)},${row.totalBenefit.toFixed(0)},${index + 1}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Best_Month_Analysis_${externalRate}percent.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadBestMonthPDF() {
+            window.print();
+        }
+
+        function downloadBestMonthExcel() {
+            if (detailedAnalysisData.length === 0) {
+                alert('Please generate analysis data first!');
+                return;
+            }
+            
+            const externalRate = parseFloat(document.getElementById('externalRate').value) || 12;
+            let excelContent = '<table border="1">';
+            excelContent += '<tr><th>Month</th><th>Bid Amount</th><th>Received Amount</th><th>Chit Profit/Loss</th><th>External Interest</th><th>Total Benefit</th><th>Rank</th></tr>';
+            
+            const comparisonData = detailedAnalysisData.map(row => {
+                const month = row[0];
+                const bidAmount = row[1];
+                const amountReceived = row[4];
+                const chitBenefit = row[5];
+                const remainingMonths = 20 - month;
+                const externalBenefit = amountReceived * (externalRate / 100) * (remainingMonths / 12);
+                const totalBenefit = chitBenefit + externalBenefit;
+                return { month, bidAmount, amountReceived, chitBenefit, externalBenefit, totalBenefit };
+            });
+
+            comparisonData.sort((a, b) => b.totalBenefit - a.totalBenefit);
+            
+            comparisonData.forEach((row, index) => {
+                excelContent += `<tr><td>${row.month}</td><td>${row.bidAmount}</td><td>${row.amountReceived}</td><td>${row.chitBenefit}</td><td>${row.externalBenefit.toFixed(0)}</td><td>${row.totalBenefit.toFixed(0)}</td><td>${index + 1}</td></tr>`;
+            });
+            
+            excelContent += '</table>';
+            
+            const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Best_Month_Analysis_${externalRate}percent.xls`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Event listeners
+        document.getElementById('chitAmount').addEventListener('input', calculate);
+        document.getElementById('commission').addEventListener('input', calculate);
+        document.getElementById('totalMonths').addEventListener('input', calculate);
+        document.getElementById('currentMonth').addEventListener('input', calculate);
+        document.getElementById('auctionAmount').addEventListener('input', calculate);
+        document.getElementById('bidAmount').addEventListener('input', calculate);
+        document.getElementById('bidInterest').addEventListener('input', calculate);
+        document.getElementById('bidAmountSlider').addEventListener('input', function() {
+            document.getElementById('bidAmount').value = new Intl.NumberFormat('en-IN').format(this.value);
+            calculate();
+        });
+        document.getElementById('bidInterestSlider').addEventListener('input', function() {
+            document.getElementById('bidInterest').value = this.value;
+            calculate();
+        });
+        document.querySelectorAll('input[name="auctionType"]').forEach(radio => {
+            radio.addEventListener('change', toggleAuctionType);
+        });
+
+        // Initialize
+        calculate();
+    </script>
+</body>
+</html>
